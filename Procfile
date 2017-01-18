@@ -1,0 +1,1 @@
+web: BIND_TO=0.0.0.0 FLASK_DEBUG=0 python3 app.py
