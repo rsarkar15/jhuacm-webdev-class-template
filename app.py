@@ -61,51 +61,34 @@ def close_connection(exception):
 
 from datetime import datetime
 
-memes = [
-    {
-        'image': 'http://www.pwpix.net/wp/wp-content/uploads/2015/08/john-cena-27795508.jpg',
-        'top_caption': 'caption one',
-        'bottom_caption': 'caption two',
-        'id': 0
-    },
-    {
-        'image': 'http://www.pwpix.net/wp/wp-content/uploads/2015/08/john-cena-27795508.jpg',
-        'top_caption': 'caption three',
-        'bottom_caption': 'caption four',
-        'id': 1
-    },
-    {
-        'image': 'http://www.pwpix.net/wp/wp-content/uploads/2015/08/john-cena-27795508.jpg',
-        'top_caption': 'caption five',
-        'bottom_caption': 'caption six',
-        'id': 2
-    }
-]
+memes = []
 
-@app.route('/say_hi/<name>')
-def say_hi(name):
-    return "hi " + name
+@app.route('/add_meme', methods=['POST'])
+def add_meme():
+    new_id = len(memes)
+    memes.append({
+        'image': request.form['image'],
+        'top_caption': request.form['top_caption'],
+        'bottom_caption': request.form['bottom_caption'],
+        'id': new_id
+    })
+    return redirect(url_for('index'))
 
-@app.route('/say_hi_query')
-def say_hi_query():
-    if request.args['is_cool'] == 'true':
-        end_of_msg = " and you're cool!"
-    else:
-        end_of_msg = " and you're a loser"
-    return "hi from query params " + request.args['name'] + end_of_msg
-
-@app.route('/say_hi_post', methods=['POST'])
-def say_hi_post():
-    return "hi " + request.form['name']
-
-@app.route('/show')
-def show():
+@app.route('/meme/<id>')
+def show(id):
+    meme_img = memes[int(id)]['image']
+    top_caption = memes[int(id)]['top_caption']
+    bottom_caption = memes[int(id)]['bottom_caption']
     return render_template(
         'show.html',
-        meme_img = 'http://www.pwpix.net/wp/wp-content/uploads/2015/08/john-cena-27795508.jpg',
-        top_caption = "He's john...",
-        bottom_caption = "CENA!"
+        meme_img = meme_img,
+        top_caption = top_caption,
+        bottom_caption = bottom_caption
     )
+
+@app.route('/meme_form')
+def meme_form():
+    return render_template('meme-form.html')
 
 @app.route('/')
 def index():
