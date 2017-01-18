@@ -59,9 +59,64 @@ def close_connection(exception):
 ###### The stuff above is a library to make things work easily. ######
 ######################################################################
 
+from datetime import datetime
+
+memes = [
+    {
+        'image': 'http://www.pwpix.net/wp/wp-content/uploads/2015/08/john-cena-27795508.jpg',
+        'top_caption': 'caption one',
+        'bottom_caption': 'caption two',
+        'id': 0
+    },
+    {
+        'image': 'http://www.pwpix.net/wp/wp-content/uploads/2015/08/john-cena-27795508.jpg',
+        'top_caption': 'caption three',
+        'bottom_caption': 'caption four',
+        'id': 1
+    },
+    {
+        'image': 'http://www.pwpix.net/wp/wp-content/uploads/2015/08/john-cena-27795508.jpg',
+        'top_caption': 'caption five',
+        'bottom_caption': 'caption six',
+        'id': 2
+    }
+]
+
+@app.route('/say_hi/<name>')
+def say_hi(name):
+    return "hi " + name
+
+@app.route('/say_hi_query')
+def say_hi_query():
+    if request.args['is_cool'] == 'true':
+        end_of_msg = " and you're cool!"
+    else:
+        end_of_msg = " and you're a loser"
+    return "hi from query params " + request.args['name'] + end_of_msg
+
+@app.route('/say_hi_post', methods=['POST'])
+def say_hi_post():
+    return "hi " + request.form['name']
+
+@app.route('/show')
+def show():
+    return render_template(
+        'show.html',
+        meme_img = 'http://www.pwpix.net/wp/wp-content/uploads/2015/08/john-cena-27795508.jpg',
+        top_caption = "He's john...",
+        bottom_caption = "CENA!"
+    )
+
 @app.route('/')
 def index():
-    return "Hello"
+    #return str(datetime.now())
+    return render_template('homepage.html', memes = memes)
+    #up_to = int(request.args['count'])
+    #out = "<ul>"
+    #for i in range(up_to):
+    #    out += "<li>" + str(i) + "</li>"
+    #out += "</ul>"
+    #return out
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

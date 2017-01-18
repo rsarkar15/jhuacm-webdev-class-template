@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MEMES!!</title>
+</head>
+<body>
+    <h1>Listing of Memes</h1>
+    <ul>
+        {%for meme in memes%}
+        <li>
+            <div>{{meme['top_caption']}}</div>
+            <div>{{meme['bottom_caption']}}</div>
+        </li>
+        {%endfor%}
+    </ul>
+</body>
+</html>
