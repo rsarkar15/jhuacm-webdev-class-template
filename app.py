@@ -61,24 +61,22 @@ def close_connection(exception):
 
 from datetime import datetime
 
-memes = []
-
 @app.route('/add_meme', methods=['POST'])
 def add_meme():
-    new_id = len(memes)
-    memes.append({
-        'image': request.form['image'],
-        'top_caption': request.form['top_caption'],
-        'bottom_caption': request.form['bottom_caption'],
-        'id': new_id
-    })
+    get_db().execute('INSERT INTO memes(url, caption1, caption2) VALUES(?, ?, ?);', [
+        request.form['image'],
+        request.form['top_caption'],
+        request.form['bottom_caption']
+    ])
     return redirect(url_for('index'))
 
 @app.route('/meme/<id>')
 def show(id):
-    meme_img = memes[int(id)]['image']
-    top_caption = memes[int(id)]['top_caption']
-    bottom_caption = memes[int(id)]['bottom_caption']
+    the_list = get_db().select('SELECT id,url,caption1,caption2 FROM memes WHERE id=?;', [int(id)])
+    meme = the_list[0]
+    meme_img = meme[1]
+    top_caption = meme[2]
+    bottom_caption = meme[3]
     return render_template(
         'show.html',
         meme_img = meme_img,
@@ -93,6 +91,14 @@ def meme_form():
 @app.route('/')
 def index():
     #return str(datetime.now())
+    memes = []
+    for row in get_db().select('SELECT id,url,caption1,caption2 FROM memes ORDER BY id DESC;'):
+        memes.append({
+            'image': row[1],
+            'top_caption': row[2],
+            'bottom_caption': row[3],
+            'id': row[0]
+        })
     return render_template('homepage.html', memes = memes)
     #up_to = int(request.args['count'])
     #out = "<ul>"
