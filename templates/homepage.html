@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MEMES!!</title>
+</head>
+<body>
+    <h1>Listing of Memes</h1>
+    <a href="/meme_form">Add a meme!</a>
+    {% if memes == [] %}
+    There are no memes. Make memes. I'm sad. i need memes. send memes.
+    {%else%}
+    <ul>
+        {%for meme in memes%}
+        <li>
+            <div><a href="/meme/{{meme['id']}}">{{meme['top_caption']}}</a></div>
+            <div><a href="/meme/{{meme['id']}}">{{meme['bottom_caption']}}</a></div>
+        </li>
+        {%endfor%}
+    </ul>
+    {%endif%}
+</body>
+</html>

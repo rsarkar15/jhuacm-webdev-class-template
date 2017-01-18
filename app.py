@@ -59,9 +59,53 @@ def close_connection(exception):
 ###### The stuff above is a library to make things work easily. ######
 ######################################################################
 
+from datetime import datetime
+
+@app.route('/add_meme', methods=['POST'])
+def add_meme():
+    get_db().execute('INSERT INTO memes(url, caption1, caption2) VALUES(?, ?, ?);', [
+        request.form['image'],
+        request.form['top_caption'],
+        request.form['bottom_caption']
+    ])
+    return redirect(url_for('index'))
+
+@app.route('/meme/<id>')
+def show(id):
+    the_list = get_db().select('SELECT id,url,caption1,caption2 FROM memes WHERE id=?;', [int(id)])
+    meme = the_list[0]
+    meme_img = meme[1]
+    top_caption = meme[2]
+    bottom_caption = meme[3]
+    return render_template(
+        'show.html',
+        meme_img = meme_img,
+        top_caption = top_caption,
+        bottom_caption = bottom_caption
+    )
+
+@app.route('/meme_form')
+def meme_form():
+    return render_template('meme-form.html')
+
 @app.route('/')
 def index():
-    return "Hello"
+    #return str(datetime.now())
+    memes = []
+    for row in get_db().select('SELECT id,url,caption1,caption2 FROM memes ORDER BY id DESC;'):
+        memes.append({
+            'image': row[1],
+            'top_caption': row[2],
+            'bottom_caption': row[3],
+            'id': row[0]
+        })
+    return render_template('homepage.html', memes = memes)
+    #up_to = int(request.args['count'])
+    #out = "<ul>"
+    #for i in range(up_to):
+    #    out += "<li>" + str(i) + "</li>"
+    #out += "</ul>"
+    #return out
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
